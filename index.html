@@ -32,7 +32,7 @@
   <script>
     let data = [];
     async function loadData() {
-      const res = await fetch('https://script.google.com/macros/s/AKfycby0v1nsDOHW9j5j95v-21gqWyf1FIE0NLMZxUR7ZVfm9icGji87KxrswFrGEd6Tgni8/exec');
+      const res = await fetch('https://script.google.com/macros/s/AKfycbzb5rEu6prDcf8VkUgStO6RTGEKNP9Jivzu7PI7wf89yNWJY9mX_XzlsapBiShHVlG5/exec');
       data = await res.json();
       renderCards(data);
     }
