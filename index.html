@@ -25,11 +25,12 @@
       <option value="NA">NA</option>
     </select>
     <select id="requestFilter">
-      <option value="">Request</option>
+      <option value="">Looking for...</option>
       <option value="Looking for team">Looking for team</option>
       <option value="Looking for players">Looking for players</option>
       <option value="Looking for coach">Looking for coach</option>
     </select>
+    <button id="resetFilters" class="btn">Zurücksetzen</button>
     <label><input type="checkbox" id="showArchived"> Show Archived</label>
   </div>
 
@@ -94,10 +95,19 @@
       renderCards(filtered);
     }
 
+    function resetFilters() {
+      document.getElementById('roleFilter').value = "";
+      document.getElementById('regionFilter').value = "";
+      document.getElementById('requestFilter').value = "";
+      document.getElementById('showArchived').checked = false;
+      applyFilters();
+    }
+
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
     document.getElementById('regionFilter').addEventListener('change', applyFilters);
     document.getElementById('requestFilter').addEventListener('change', applyFilters);
     document.getElementById('showArchived').addEventListener('change', applyFilters);
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
 
     loadData();
   </script>
