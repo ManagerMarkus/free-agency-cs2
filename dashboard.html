@@ -11,76 +11,94 @@
     const pwd = prompt("🔒 Admin-Passwort:");
     if (pwd !== "cs2free2025") {
       document.body.innerHTML = "<h2>Zugriff verweigert ❌</h2>";
-      throw new Error("Unauthorized");
-    }
-  </script>
-
-  <h1>Admin Dashboard</h1>
-  <div id="admin-entries"></div>
-
-  <script>
-    const supabaseUrl = "https://naornmbibulaoglbfywk.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8";
-
-    async function fetchData() {
-      const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*", {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: 'Bearer ' + supabaseKey
-        }
-      });
-      return await res.json();
+    } else {
+      initDashboard();
     }
 
-    async function deleteEntry(id) {
-      if (!confirm("Diesen Eintrag wirklich löschen?")) return;
-      await fetch(supabaseUrl + "/rest/v1/entries?id=eq." + id, {
-        method: "DELETE",
-        headers: {
-          apikey: supabaseKey,
-          Authorization: 'Bearer ' + supabaseKey
-        }
-      });
+    function initDashboard() {
+      document.body.innerHTML = `
+        <h1>Admin Dashboard</h1>
+        <button onclick="exportCSV()" class="btn submit">📥 CSV herunterladen</button>
+        <div id="admin-entries"></div>
+      `;
+
+      const supabaseUrl = "https://naornmbibulaoglbfywk.supabase.co";
+      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8";
+
+      async function fetchData() {
+        const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*", {
+          headers: {
+            apikey: supabaseKey,
+            Authorization: 'Bearer ' + supabaseKey
+          }
+        });
+        return await res.json();
+      }
+
+      async function deleteEntry(id) {
+        if (!confirm("Diesen Eintrag wirklich löschen?")) return;
+        await fetch(supabaseUrl + "/rest/v1/entries?id=eq." + id, {
+          method: "DELETE",
+          headers: {
+            apikey: supabaseKey,
+            Authorization: 'Bearer ' + supabaseKey
+          }
+        });
+        loadEntries();
+      }
+
+      async function updateEntry(id) {
+        const request = prompt("Neue Request-Bezeichnung eingeben:");
+        const active = prompt("Aktiv? yes / no:");
+        if (!request || !active) return;
+
+        await fetch(supabaseUrl + "/rest/v1/entries?id=eq." + id, {
+          method: "PATCH",
+          headers: {
+            apikey: supabaseKey,
+            Authorization: 'Bearer ' + supabaseKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ request, active })
+        });
+        loadEntries();
+      }
+
+      async function loadEntries() {
+        const data = await fetchData();
+        const container = document.getElementById("admin-entries");
+        container.innerHTML = "";
+        data.forEach(e => {
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <strong>${e.name}</strong> (${e.role}, ${e.region}) – ${e.request} <br/>
+            <a href="${e.twitter}" target="_blank">Twitter</a> |
+            <a href="${e.moreInfo}" target="_blank">More Info</a> <br/>
+            <small>Active: ${e.active}</small><br/>
+            <button onclick="updateEntry('${e.id}')">Bearbeiten</button>
+            <button onclick="deleteEntry('${e.id}')">Löschen</button>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      async function exportCSV() {
+        const data = await fetchData();
+        const headers = Object.keys(data[0]);
+        const rows = data.map(row => headers.map(h => `"${row[h] ?? ''}"`).join(","));
+        const csv = [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "entries.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
       loadEntries();
     }
-
-    async function updateEntry(id) {
-      const request = prompt("Neue Request-Bezeichnung eingeben:");
-      const active = prompt("Aktiv? yes / no:");
-      if (!request || !active) return;
-
-      await fetch(supabaseUrl + "/rest/v1/entries?id=eq." + id, {
-        method: "PATCH",
-        headers: {
-          apikey: supabaseKey,
-          Authorization: 'Bearer ' + supabaseKey,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ request, active })
-      });
-      loadEntries();
-    }
-
-    async function loadEntries() {
-      const data = await fetchData();
-      const container = document.getElementById("admin-entries");
-      container.innerHTML = "";
-      data.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-          <strong>${e.name}</strong> (${e.role}, ${e.region}) – ${e.request} <br/>
-          <a href="${e.twitter}" target="_blank">Twitter</a> |
-          <a href="${e.moreInfo}" target="_blank">More Info</a> <br/>
-          <small>Active: ${e.active}</small><br/>
-          <button onclick="updateEntry('${e.id}')">Bearbeiten</button>
-          <button onclick="deleteEntry('${e.id}')">Löschen</button>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    loadEntries();
   </script>
 </body>
 </html>
