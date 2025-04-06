@@ -9,7 +9,7 @@
 <body>
   <div class="header">
     <h1>Free Agency - CS2 (Male)</h1>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScNCZxHfN_J4ljqrqjW2bOGmgRfM7i04mw2WB-oJakJr75fqQ/viewform" target="_blank" class="btn submit">Submit Request</a>
+    <a href="https://forms.gle/1FpgbMZUkupGmGUFNUVWguQ4sM6VUjVkh" target="_blank" class="btn submit">Submit Request</a>
   </div>
   <div class="filters">
     <select id="roleFilter">
@@ -61,6 +61,21 @@
     }
 
     function applyFilters() {
+  const role = document.getElementById('roleFilter').value;
+  const region = document.getElementById('regionFilter').value;
+  const request = document.getElementById('requestFilter').value;
+  const showArchived = document.getElementById('showArchived').checked;
+
+  const filtered = data.filter(entry => {
+    const isActive = !entry.active || entry.active.trim().toLowerCase() === "yes";
+    const matchesRole = !role || (entry.role && entry.role.trim() === role);
+    const matchesRegion = !region || (entry.region && entry.region.trim() === region);
+    const matchesRequest = !request || (entry.request && entry.request.trim() === request);
+    return matchesRole && matchesRegion && matchesRequest && (showArchived || isActive);
+  });
+
+  renderCards(filtered);
+}
       const role = document.getElementById('roleFilter').value;
       const region = document.getElementById('regionFilter').value;
       const request = document.getElementById('requestFilter').value;
