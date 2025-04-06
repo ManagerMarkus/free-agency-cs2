@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,32 +62,17 @@
     }
 
     function applyFilters() {
-  const role = document.getElementById('roleFilter').value;
-  const region = document.getElementById('regionFilter').value;
-  const request = document.getElementById('requestFilter').value;
-  const showArchived = document.getElementById('showArchived').checked;
-
-  const filtered = data.filter(entry => {
-    const isActive = !entry.active || entry.active.trim().toLowerCase() === "yes";
-    const matchesRole = !role || (entry.role && entry.role.trim() === role);
-    const matchesRegion = !region || (entry.region && entry.region.trim() === region);
-    const matchesRequest = !request || (entry.request && entry.request.trim() === request);
-    return matchesRole && matchesRegion && matchesRequest && (showArchived || isActive);
-  });
-
-  renderCards(filtered);
-}
       const role = document.getElementById('roleFilter').value;
       const region = document.getElementById('regionFilter').value;
       const request = document.getElementById('requestFilter').value;
       const showArchived = document.getElementById('showArchived').checked;
 
       const filtered = data.filter(entry => {
-        const isActive = entry.active && entry.active.toLowerCase() === "yes";
-        return (!role || entry.role === role) &&
-               (!region || entry.region === region) &&
-               (!request || entry.request === request) &&
-               (showArchived || isActive);
+        const isActive = !entry.active || entry.active.trim().toLowerCase() === "yes";
+        const matchesRole = !role || (entry.role && entry.role.trim() === role);
+        const matchesRegion = !region || (entry.region && entry.region.trim() === region);
+        const matchesRequest = !request || (entry.request && entry.request.trim() === request);
+        return matchesRole && matchesRegion && matchesRequest && (showArchived || isActive);
       });
 
       renderCards(filtered);
