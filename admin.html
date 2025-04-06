@@ -12,9 +12,23 @@
     <h1>Admin Panel</h1>
     <form id="entryForm">
       <input type="text" id="name" placeholder="Name" required />
-      <input type="text" id="role" placeholder="Role" required />
-      <input type="text" id="region" placeholder="Region" required />
-      <input type="text" id="request" placeholder="Request" required />
+      <select id="role" required>
+        <option value="">Role</option>
+        <option value="Player">Player</option>
+        <option value="Coach">Coach</option>
+        <option value="Organisation">Organisation</option>
+      </select>
+      <select id="region" required>
+        <option value="">Region</option>
+        <option value="EU">EU</option>
+        <option value="NA">NA</option>
+      </select>
+      <select id="request" required>
+        <option value="">Request</option>
+        <option value="Looking for team">Looking for team</option>
+        <option value="Looking for players">Looking for players</option>
+        <option value="Looking for coach">Looking for coach</option>
+      </select>
       <input type="url" id="twitter" placeholder="Twitter Link" required />
       <input type="url" id="moreInfo" placeholder="More Info (Twitter Post)" required />
       <select id="active" required>
