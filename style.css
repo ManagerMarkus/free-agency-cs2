@@ -1,6 +1,13 @@
 
 body { font-family: sans-serif; padding: 20px; }
-.admin-wrapper { max-width: 500px; margin: 0 auto; }
+.filters select { margin-right: 10px; padding: 5px; }
+.card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+.btn { display: inline-block; margin: 5px 5px 5px 0; padding: 6px 12px; text-decoration: none; cursor: pointer; }
+.twitter { background: #1DA1F2; color: #fff; }
+.info { background: #6666cc; color: #fff; }
+.submit { background: #28a745; color: #fff; }
+.reset { background: #999; color: #fff; margin-right: 15px; }
+.archived { font-size: 0.85em; color: red; margin-left: 10px; font-weight: bold; }
 form input, form select, form button {
   display: block;
   width: 100%;
@@ -8,5 +15,6 @@ form input, form select, form button {
   padding: 8px;
   font-size: 16px;
 }
+.admin-wrapper { max-width: 500px; margin: 0 auto; }
 button { background: #007BFF; color: white; border: none; cursor: pointer; }
 button:hover { background: #0056b3; }
