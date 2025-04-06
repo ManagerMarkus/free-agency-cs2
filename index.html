@@ -1,16 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Agency - CS2</title>
+  <title>Free Agency - CS2 (Supabase)</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="header">
     <h1>Free Agency - CS2 (Male)</h1>
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLScNCZxHfN_J4ljqrqjW2bOGmgRfM7i04mw2WB-oJakJr75fqQ/viewform" target="_blank" class="btn submit">Submit Request</a>
+    <a href="admin.html" target="_blank" class="btn submit">Submit Request</a>
   </div>
   <div class="filters">
     <button id="resetFilters" class="btn reset">Zurücksetzen</button>
@@ -37,10 +36,18 @@
   <div id="cards"></div>
 
   <script>
+    const supabaseUrl = "https://naornmbibulaoglbfywk.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8";
     let data = [];
+
     async function loadData() {
       document.getElementById("loading").style.display = "block";
-      const res = await fetch('https://script.google.com/macros/s/AKfycbzb5rEu6prDcf8VkUgStO6RTGEKNP9Jivzu7PI7wf89yNWJY9mX_XzlsapBiShHVlG5/exec');
+      const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*", {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': 'Bearer ' + supabaseKey
+        }
+      });
       data = await res.json();
       renderCards(data);
       document.getElementById("loading").style.display = "none";
@@ -54,10 +61,10 @@
         card.className = 'card';
         const archivedLabel = entry.active && entry.active.trim().toLowerCase() === "no" ? '<span class="archived">[Archiviert]</span>' : '';
         card.innerHTML = `
-          <h3>${entry.name}</h3>
-          <p>${entry.request} ${archivedLabel}</p>
-          <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
-          <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>
+          <h3>\${entry.name}</h3>
+          <p>\${entry.request} \${archivedLabel}</p>
+          <a href="\${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
+          <a href="\${entry.moreInfo}" target="_blank" class="btn info">More Info</a>
         `;
         container.appendChild(card);
       });
