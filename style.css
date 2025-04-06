@@ -1,0 +1,6 @@
+body { font-family: sans-serif; padding: 20px; }
+.filters select { margin-right: 10px; padding: 5px; }
+.card { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+.btn { display: inline-block; margin: 5px 0; padding: 6px 12px; text-decoration: none; }
+.twitter { background: #1DA1F2; color: #fff; }
+.info { background: #6666cc; color: #fff; }

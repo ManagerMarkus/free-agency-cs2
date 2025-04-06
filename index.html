@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Agency - CS2</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Free Agency - CS2 (Male)</h1>
+  <div class="filters">
+    <select id="roleFilter">
+      <option value="">Role</option>
+      <option value="Player">Player</option>
+      <option value="Coach">Coach</option>
+      <option value="Organisation">Organisation</option>
+    </select>
+    <select id="regionFilter">
+      <option value="">Region</option>
+      <option value="EU">EU</option>
+      <option value="NA">NA</option>
+    </select>
+    <select id="requestFilter">
+      <option value="">Request</option>
+      <option value="Looking For Team">Looking For Team</option>
+      <option value="Looking For Players">Looking For Players</option>
+      <option value="Looking For Coach">Looking For Coach</option>
+    </select>
+  </div>
+  <div id="cards"></div>
+
+  <script>
+    let data = [];
+    async function loadData() {
+      const res = await fetch('data.json');
+      data = await res.json();
+      renderCards(data);
+    }
+
+    function renderCards(list) {
+      const container = document.getElementById('cards');
+      container.innerHTML = '';
+      list.forEach(entry => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${entry.name}</h3>
+          <p>${entry.request}</p>
+          <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
+          <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function applyFilters() {
+      const role = document.getElementById('roleFilter').value;
+      const region = document.getElementById('regionFilter').value;
+      const request = document.getElementById('requestFilter').value;
+      const filtered = data.filter(entry => {
+        return (!role || entry.role === role) &&
+               (!region || entry.region === region) &&
+               (!request || entry.request === request);
+      });
+      renderCards(filtered);
+    }
+
+    document.getElementById('roleFilter').addEventListener('change', applyFilters);
+    document.getElementById('regionFilter').addEventListener('change', applyFilters);
+    document.getElementById('requestFilter').addEventListener('change', applyFilters);
+
+    loadData();
+  </script>
+</body>
+</html>

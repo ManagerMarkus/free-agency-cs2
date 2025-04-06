@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="login">
+    <h2>Admin Login</h2>
+    <input type="password" id="adminPassword" placeholder="Enter password" />
+    <button onclick="checkPassword()">Login</button>
+  </div>
+
+  <div id="adminPanel" style="display: none;">
+    <h1>Admin Panel</h1>
+    <form id="entryForm">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="text" id="role" placeholder="Role" required />
+      <input type="text" id="region" placeholder="Region" required />
+      <input type="text" id="request" placeholder="Request" required />
+      <input type="url" id="twitter" placeholder="Twitter Link" required />
+      <input type="url" id="moreInfo" placeholder="More Info (Twitter Post)" required />
+      <button type="submit">Generate JSON</button>
+    </form>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const input = document.getElementById("adminPassword").value;
+      if (input === "cs2free2025") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+      } else {
+        alert("Incorrect password");
+      }
+    }
+
+    document.getElementById('entryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const obj = {
+        name: name.value,
+        role: role.value,
+        region: region.value,
+        request: request.value,
+        twitter: twitter.value,
+        moreInfo: moreInfo.value
+      };
+      document.getElementById('output').textContent = JSON.stringify(obj, null, 2);
+    });
+  </script>
+</body>
+</html>
