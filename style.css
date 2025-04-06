@@ -95,3 +95,9 @@ h1 {
 
 .btn.info {
   background
+}
+
+.btn.submit {
+  background-color: #4CAF50;
+  color: white;
+}
