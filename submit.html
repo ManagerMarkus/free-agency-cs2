@@ -58,7 +58,7 @@
       <option value="NA">NA</option>
     </select>
 
-    <label for="request">Request</label>
+    <label for="request">Looking for...</label>
     <select id="request" required>
       <option value="">Select request</option>
       <option value="Looking for team">Looking for team</option>
@@ -66,11 +66,13 @@
       <option value="Looking for coach">Looking for coach</option>
     </select>
 
-    <label for="twitter">Twitter Link</label>
-    <input id="twitter" type="url" required />
+    <label for="twitter">X.com Link</label>
+    <input id="twitter" type="url" pattern="https://x\.com/.*" required 
+      title="Bitte gib einen vollständigen X.com-Link an (z. B. https://x.com/yourhandle)" />
 
-    <label for="moreInfo">More Info (Twitter Post)</label>
-    <input id="moreInfo" type="url" required />
+    <label for="moreInfo">More Info (X.com Post)</label>
+    <input id="moreInfo" type="url" pattern="https://x\.com/.*/status/.*" required 
+      title="Bitte gib den Link zu deinem X.com-Post an (z. B. https://x.com/yourhandle/status/...)" />
 
     <button type="submit">Send Request</button>
     <div id="status"></div>
