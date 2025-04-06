@@ -5,6 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard – Admin</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    .action-btns button {
+      margin-right: 5px;
+    }
+    .top-actions {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
   <script>
@@ -18,7 +39,9 @@
     function initDashboard() {
       document.body.innerHTML = `
         <h1>Admin Dashboard</h1>
-        <button onclick="exportCSV()" class="btn submit">📥 CSV herunterladen</button>
+        <div class="top-actions">
+          <button onclick="exportCSV()" class="btn submit">📥 CSV herunterladen</button>
+        </div>
         <div id="admin-entries"></div>
       `;
 
@@ -47,11 +70,37 @@
         loadEntries();
       }
 
-      async function updateEntry(id) {
-        const request = prompt("Neue Request-Bezeichnung eingeben:");
-        const active = prompt("Aktiv? yes / no:");
-        if (!request || !active) return;
+      function editEntryForm(entry) {
+        return `
+          <td><input value="\${entry.name}" id="name-\${entry.id}" /></td>
+          <td><input value="\${entry.role}" id="role-\${entry.id}" /></td>
+          <td><input value="\${entry.region}" id="region-\${entry.id}" /></td>
+          <td><input value="\${entry.request}" id="request-\${entry.id}" /></td>
+          <td><input value="\${entry.twitter}" id="twitter-\${entry.id}" /></td>
+          <td><input value="\${entry.moreInfo}" id="moreInfo-\${entry.id}" /></td>
+          <td>
+            <select id="active-\${entry.id}">
+              <option value="yes" \${entry.active === "yes" ? "selected" : ""}>yes</option>
+              <option value="no" \${entry.active === "no" ? "selected" : ""}>no</option>
+            </select>
+          </td>
+          <td class="action-btns">
+            <button onclick="saveEntry('\${entry.id}')">Speichern</button>
+            <button onclick="loadEntries()">Abbrechen</button>
+          </td>
+        `;
+      }
 
+      async function saveEntry(id) {
+        const payload = {
+          name: document.getElementById(`name-\${id}`).value,
+          role: document.getElementById(`role-\${id}`).value,
+          region: document.getElementById(`region-\${id}`).value,
+          request: document.getElementById(`request-\${id}`).value,
+          twitter: document.getElementById(`twitter-\${id}`).value,
+          moreInfo: document.getElementById(`moreInfo-\${id}`).value,
+          active: document.getElementById(`active-\${id}`).value
+        };
         await fetch(supabaseUrl + "/rest/v1/entries?id=eq." + id, {
           method: "PATCH",
           headers: {
@@ -59,28 +108,52 @@
             Authorization: 'Bearer ' + supabaseKey,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ request, active })
+          body: JSON.stringify(payload)
         });
         loadEntries();
       }
 
+      function renderRow(entry) {
+        return `
+          <tr id="row-\${entry.id}">
+            <td>\${entry.name}</td>
+            <td>\${entry.role}</td>
+            <td>\${entry.region}</td>
+            <td>\${entry.request}</td>
+            <td><a href="\${entry.twitter}" target="_blank">Twitter</a></td>
+            <td><a href="\${entry.moreInfo}" target="_blank">More Info</a></td>
+            <td>\${entry.active}</td>
+            <td class="action-btns">
+              <button onclick="editRow('\${entry.id}')">Bearbeiten</button>
+              <button onclick="deleteEntry('\${entry.id}')">Löschen</button>
+            </td>
+          </tr>
+        `;
+      }
+
+      function editRow(id) {
+        const entry = data.find(e => e.id === id);
+        document.getElementById(`row-\${id}`).innerHTML = editEntryForm(entry);
+      }
+
+      let data = [];
+
       async function loadEntries() {
-        const data = await fetchData();
-        const container = document.getElementById("admin-entries");
-        container.innerHTML = "";
-        data.forEach(e => {
-          const div = document.createElement("div");
-          div.className = "card";
-          div.innerHTML = `
-            <strong>${e.name}</strong> (${e.role}, ${e.region}) – ${e.request} <br/>
-            <a href="${e.twitter}" target="_blank">Twitter</a> |
-            <a href="${e.moreInfo}" target="_blank">More Info</a> <br/>
-            <small>Active: ${e.active}</small><br/>
-            <button onclick="updateEntry('${e.id}')">Bearbeiten</button>
-            <button onclick="deleteEntry('${e.id}')">Löschen</button>
-          `;
-          container.appendChild(div);
-        });
+        data = await fetchData();
+        const table = `
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Role</th><th>Region</th><th>Request</th>
+                <th>Twitter</th><th>More Info</th><th>Active</th><th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              \${data.map(renderRow).join("")}
+            </tbody>
+          </table>
+        `;
+        document.getElementById("admin-entries").innerHTML = table;
       }
 
       async function exportCSV() {
