@@ -7,7 +7,10 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Free Agency - CS2 (Male)</h1>
+  <div class="header">
+    <h1>Free Agency - CS2 (Male)</h1>
+    <a href="https://forms.gle/1FpgbMZUkupGmGUFNUVWguQ4sM6VUjVkh" target="_blank" class="btn submit">Submit Request</a>
+  </div>
   <div class="filters">
     <select id="roleFilter">
       <option value="">Role</option>
@@ -26,15 +29,19 @@
       <option value="Looking For Players">Looking For Players</option>
       <option value="Looking For Coach">Looking For Coach</option>
     </select>
+    <label><input type="checkbox" id="showArchived"> Show Archived</label>
   </div>
+  <div id="loading">Loading entries...</div>
   <div id="cards"></div>
 
   <script>
     let data = [];
     async function loadData() {
+      document.getElementById("loading").style.display = "block";
       const res = await fetch('https://script.google.com/macros/s/AKfycbzb5rEu6prDcf8VkUgStO6RTGEKNP9Jivzu7PI7wf89yNWJY9mX_XzlsapBiShHVlG5/exec');
       data = await res.json();
       renderCards(data);
+      document.getElementById("loading").style.display = "none";
     }
 
     function renderCards(list) {
@@ -57,17 +64,23 @@
       const role = document.getElementById('roleFilter').value;
       const region = document.getElementById('regionFilter').value;
       const request = document.getElementById('requestFilter').value;
+      const showArchived = document.getElementById('showArchived').checked;
+
       const filtered = data.filter(entry => {
+        const isActive = entry.active && entry.active.toLowerCase() === "yes";
         return (!role || entry.role === role) &&
                (!region || entry.region === region) &&
-               (!request || entry.request === request);
+               (!request || entry.request === request) &&
+               (showArchived || isActive);
       });
+
       renderCards(filtered);
     }
 
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
     document.getElementById('regionFilter').addEventListener('change', applyFilters);
     document.getElementById('requestFilter').addEventListener('change', applyFilters);
+    document.getElementById('showArchived').addEventListener('change', applyFilters);
 
     loadData();
   </script>
