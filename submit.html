@@ -1,52 +1,90 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Submit Request</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    form {
+      max-width: 400px;
+      margin: 40px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select {
+      padding: 8px;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h1>Submit Request</h1>
-  <form id="entryForm" style="max-width: 400px;">
-    <label><input type="text" id="name" placeholder="Name" required /></label><br><br>
-    <label>
-      <select id="role" required>
-        <option value="">Role</option>
-        <option value="Player">Player</option>
-        <option value="Coach">Coach</option>
-        <option value="Organisation">Organisation</option>
-      </select>
-    </label><br><br>
-    <label>
-      <select id="region" required>
-        <option value="">Region</option>
-        <option value="EU">EU</option>
-        <option value="NA">NA</option>
-      </select>
-    </label><br><br>
-    <label>
-      <select id="request" required>
-        <option value="">Request</option>
-        <option value="Looking for team">Looking for team</option>
-        <option value="Looking for players">Looking for players</option>
-        <option value="Looking for coach">Looking for coach</option>
-      </select>
-    </label><br><br>
-    <label><input type="url" id="twitter" placeholder="Twitter Link" required /></label><br><br>
-    <label><input type="url" id="moreInfo" placeholder="More Info (Twitter Post)" required /></label><br><br>
-    <button type="submit" class="btn submit">Absenden</button>
+  <h1 style="text-align:center;">Submit Request</h1>
+  <form id="submitForm">
+    <label for="name">Name</label>
+    <input id="name" required />
+
+    <label for="role">Role</label>
+    <select id="role" required>
+      <option value="">Select role</option>
+      <option value="Player">Player</option>
+      <option value="Coach">Coach</option>
+      <option value="Organisation">Organisation</option>
+    </select>
+
+    <label for="region">Region</label>
+    <select id="region" required>
+      <option value="">Select region</option>
+      <option value="EU">EU</option>
+      <option value="NA">NA</option>
+    </select>
+
+    <label for="request">Request</label>
+    <select id="request" required>
+      <option value="">Select request</option>
+      <option value="Looking for team">Looking for team</option>
+      <option value="Looking for players">Looking for players</option>
+      <option value="Looking for coach">Looking for coach</option>
+    </select>
+
+    <label for="twitter">Twitter Link</label>
+    <input id="twitter" type="url" required />
+
+    <label for="moreInfo">More Info (Twitter Post)</label>
+    <input id="moreInfo" type="url" required />
+
+    <button type="submit">Send Request</button>
+    <div id="status"></div>
   </form>
 
-  <div id="status"></div>
-
   <script>
-    const supabaseUrl = "{supabase_url}";
-    const supabaseKey = "{supabase_key}";
+    const form = document.getElementById("submitForm");
+    const status = document.getElementById("status");
 
-    document.getElementById("entryForm").addEventListener("submit", async function (e) {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const obj = {
+      status.textContent = "⏳ Sending...";
+
+      const data = {
         name: name.value,
         role: role.value,
         region: region.value,
@@ -56,21 +94,21 @@
         active: "yes"
       };
 
-      const res = await fetch(supabaseUrl + "/rest/v1/entries", {
+      const res = await fetch("https://naornmbibulaoglbfywk.supabase.co/rest/v1/entries", {
         method: "POST",
         headers: {
-          apikey: supabaseKey,
-          Authorization: "Bearer " + supabaseKey,
+          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
+          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(obj)
+        body: JSON.stringify(data)
       });
 
-      if (res.status === 201) {
-        document.getElementById("status").innerText = "✅ Erfolgreich übermittelt!";
-        document.getElementById("entryForm").reset();
+      if (res.ok) {
+        status.textContent = "✅ Success! Entry submitted.";
+        form.reset();
       } else {
-        document.getElementById("status").innerText = "❌ Fehler beim Absenden.";
+        status.textContent = "❌ Failed to submit entry.";
       }
     });
   </script>

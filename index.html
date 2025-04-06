@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Agency - CS2 (Supabase)</title>
+  <title>Free Agency - CS2</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -11,8 +11,8 @@
     <h1>Free Agency - CS2 (Male)</h1>
     <a href="submit.html" target="_blank" class="btn submit">Submit Request</a>
   </div>
+
   <div class="filters">
-    <button id="resetFilters" class="btn reset">Zurücksetzen</button>
     <select id="roleFilter">
       <option value="">Role</option>
       <option value="Player">Player</option>
@@ -32,20 +32,18 @@
     </select>
     <label><input type="checkbox" id="showArchived"> Show Archived</label>
   </div>
+
   <div id="loading">Loading entries...</div>
   <div id="cards"></div>
 
   <script>
-    const supabaseUrl = "https://naornmbibulaoglbfywk.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8";
     let data = [];
-
     async function loadData() {
       document.getElementById("loading").style.display = "block";
-      const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*", {
+      const res = await fetch('https://naornmbibulaoglbfywk.supabase.co/rest/v1/entries?select=*', {
         headers: {
-          'apikey': supabaseKey,
-          'Authorization': 'Bearer ' + supabaseKey
+          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8'
         }
       });
       data = await res.json();
@@ -57,13 +55,24 @@
       const container = document.getElementById('cards');
       container.innerHTML = '';
       list.forEach(entry => {
+        const isActive = !entry.active || entry.active.toLowerCase() === 'yes';
+        if (!isActive && !document.getElementById("showArchived").checked) return;
+
         const card = document.createElement('div');
         card.className = 'card';
-        const archivedLabel = entry.active && entry.active.trim().toLowerCase() === "no" ? '<span class="archived">[Archiviert]</span>' : '';
-        card.innerHTML = `<h3>${entry.name}</h3>
-                          <p>${entry.request} ${archivedLabel}</p>
-                          <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
-                          <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>`;
+
+        const roleLabel = entry.role || "";
+        const badgeClass = roleLabel ? `role-badge role-${roleLabel}` : "";
+
+        card.innerHTML = `
+          <div class="${badgeClass}">${roleLabel.toUpperCase()}</div>
+          <h3>${entry.name}</h3>
+          <p>${entry.request}</p>
+          <div>
+            <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
+            <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>
+          </div>
+        `;
         container.appendChild(card);
       });
     }
@@ -89,13 +98,6 @@
     document.getElementById('regionFilter').addEventListener('change', applyFilters);
     document.getElementById('requestFilter').addEventListener('change', applyFilters);
     document.getElementById('showArchived').addEventListener('change', applyFilters);
-    document.getElementById('resetFilters').addEventListener('click', () => {
-      document.getElementById('roleFilter').value = '';
-      document.getElementById('regionFilter').value = '';
-      document.getElementById('requestFilter').value = '';
-      document.getElementById('showArchived').checked = false;
-      applyFilters();
-    });
 
     loadData();
   </script>
