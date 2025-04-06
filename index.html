@@ -13,6 +13,7 @@
     <a href="https://docs.google.com/forms/d/e/1FAIpQLScNCZxHfN_J4ljqrqjW2bOGmgRfM7i04mw2WB-oJakJr75fqQ/viewform" target="_blank" class="btn submit">Submit Request</a>
   </div>
   <div class="filters">
+    <button id="resetFilters" class="btn reset">Zurücksetzen</button>
     <select id="roleFilter">
       <option value="">Role</option>
       <option value="Player">Player</option>
@@ -51,9 +52,10 @@
       list.forEach(entry => {
         const card = document.createElement('div');
         card.className = 'card';
+        const archivedLabel = entry.active && entry.active.trim().toLowerCase() === "no" ? '<span class="archived">[Archiviert]</span>' : '';
         card.innerHTML = `
           <h3>${entry.name}</h3>
-          <p>${entry.request}</p>
+          <p>${entry.request} ${archivedLabel}</p>
           <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
           <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>
         `;
@@ -82,6 +84,13 @@
     document.getElementById('regionFilter').addEventListener('change', applyFilters);
     document.getElementById('requestFilter').addEventListener('change', applyFilters);
     document.getElementById('showArchived').addEventListener('change', applyFilters);
+    document.getElementById('resetFilters').addEventListener('click', () => {
+      document.getElementById('roleFilter').value = '';
+      document.getElementById('regionFilter').value = '';
+      document.getElementById('requestFilter').value = '';
+      document.getElementById('showArchived').checked = false;
+      applyFilters();
+    });
 
     loadData();
   </script>

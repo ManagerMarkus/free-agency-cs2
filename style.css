@@ -23,3 +23,9 @@ body { font-family: sans-serif; padding: 20px; }
 .info { background: #6666cc; color: #fff; }
 .submit { background: #28a745; color: #fff; }
 #loading { font-weight: bold; margin: 20px 0; }
+
+  font-size: 0.85em;
+  color: red;
+  margin-left: 10px;
+  font-weight: bold;
+}
