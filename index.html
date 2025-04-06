@@ -60,10 +60,10 @@
         const card = document.createElement('div');
         card.className = 'card';
         const archivedLabel = entry.active && entry.active.trim().toLowerCase() === "no" ? '<span class="archived">[Archiviert]</span>' : '';
-        card.innerHTML = `<h3>\${entry.name}</h3>
-                          <p>\${entry.request} \${archivedLabel}</p>
-                          <a href="\${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
-                          <a href="\${entry.moreInfo}" target="_blank" class="btn info">More Info</a>`;
+        card.innerHTML = `<h3>${entry.name}</h3>
+                          <p>${entry.request} ${archivedLabel}</p>
+                          <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
+                          <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>`;
         container.appendChild(card);
       });
     }
