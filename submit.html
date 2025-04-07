@@ -79,40 +79,48 @@
   </form>
 
   <script>
-    const form = document.getElementById("submitForm");
-    const status = document.getElementById("status");
+  const form = document.getElementById("submitForm");
+  const status = document.getElementById("status");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      status.textContent = "⏳ Sending...";
+  // Neue, eindeutige Referenzen auf die Form-Felder
+  const nameInput = document.getElementById("name");
+  const role = document.getElementById("role");
+  const region = document.getElementById("region");
+  const request = document.getElementById("request");
+  const twitter = document.getElementById("twitter");
+  const moreInfo = document.getElementById("moreInfo");
 
-      const data = {
-        name: name.value,
-        role: role.value,
-        region: region.value,
-        request: request.value,
-        twitter: twitter.value,
-        moreInfo: moreInfo.value,
-        active: "yes"
-      };
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    status.textContent = "⏳ Sending...";
 
-      const res = await fetch("https://naornmbibulaoglbfywk.supabase.co/rest/v1/entries", {
-        method: "POST",
-        headers: {
-          "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
-          "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      });
+    const data = {
+      name: nameInput.value,
+      role: role.value,
+      region: region.value,
+      request: request.value,
+      twitter: twitter.value,
+      moreInfo: moreInfo.value,
+      active: "yes"
+    };
 
-      if (res.ok) {
-        status.textContent = "✅ Success! Entry submitted.";
-        form.reset();
-      } else {
-        status.textContent = "❌ Failed to submit entry.";
-      }
+    const res = await fetch("https://naornmbibulaoglbfywk.supabase.co/rest/v1/entries", {
+      method: "POST",
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
     });
+
+    if (res.ok) {
+      status.textContent = "✅ Success! Entry submitted.";
+      form.reset();
+    } else {
+      status.textContent = "❌ Failed to submit entry.";
+    }
+  });
   </script>
 </body>
 </html>
