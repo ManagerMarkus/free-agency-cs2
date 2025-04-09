@@ -3,113 +3,138 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Free Agency - CS2</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Free Agency Board</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="header">
-    <h1>Free Agency - CS2 (Male)</h1>
-    <a href="submit.html" target="_blank" class="btn submit">Submit Request</a>
+<body class="bg-gray-100 p-4 md:p-6">
+  <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+    <h1 class="text-3xl font-bold">CS2 Free Agency Board</h1>
+    <a href="submit.html" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded self-start md:self-auto">Submit Request</a>
   </div>
 
-  <div class="filters">
-    <select id="roleFilter">
+  <div class="mb-4 flex flex-wrap gap-2 md:gap-4 items-center">
+    <select id="roleFilter" class="border px-4 py-2 rounded">
       <option value="">Role</option>
-      <option value="Player">Player</option>
       <option value="Coach">Coach</option>
+      <option value="Player">Player</option>
+      <option value="Team">Team</option>
       <option value="Organisation">Organisation</option>
     </select>
-    <select id="regionFilter">
+    <select id="regionFilter" class="border px-4 py-2 rounded">
       <option value="">Region</option>
       <option value="EU">EU</option>
       <option value="NA">NA</option>
     </select>
-    <select id="requestFilter">
+    <select id="requestFilter" class="border px-4 py-2 rounded">
       <option value="">Looking for...</option>
       <option value="Looking for team">Looking for team</option>
       <option value="Looking for players">Looking for players</option>
       <option value="Looking for coach">Looking for coach</option>
     </select>
-    <button id="resetFilters" class="btn reset">Reset filters</button>
-    <label><input type="checkbox" id="showArchived"> Show Archived</label>
+    <select id="experienceFilter" class="border px-4 py-2 rounded">
+      <option value="">Experience</option>
+      <option value="Open">Open</option>
+      <option value="Entry">Entry</option>
+      <option value="Intermediate">Intermediate</option>
+      <option value="Main">Main</option>
+      <option value="Advanced">Advanced</option>
+    </select>
+    <button onclick="resetFilters()" class="bg-gray-200 px-4 py-2 rounded">Reset filters</button>
+    <label class="flex items-center">
+      <input type="checkbox" id="showArchived" class="mr-2"> Show Archived
+    </label>
   </div>
 
-  <div id="loading">Loading entries...</div>
-  <div id="cards"></div>
+  <div id="entries" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"></div>
 
   <script>
-    let data = [];
-    async function loadData() {
-      document.getElementById("loading").style.display = "block";
-      const res = await fetch('https://naornmbibulaoglbfywk.supabase.co/rest/v1/entries?select=*', {
+    const supabaseUrl = "https://naornmbibulaoglbfywk.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8";
+
+    async function fetchEntries() {
+      const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*", {
         headers: {
-          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8'
+          apikey: supabaseKey,
+          Authorization: 'Bearer ' + supabaseKey
         }
       });
-      data = await res.json();
-      renderCards(data);
-      document.getElementById("loading").style.display = "none";
+      return await res.json();
     }
 
-    function renderCards(list) {
-      const container = document.getElementById('cards');
-      container.innerHTML = '';
-      list.forEach(entry => {
-        const isActive = !entry.active || entry.active.toLowerCase() === 'yes';
-        if (!isActive && !document.getElementById("showArchived").checked) return;
+    function renderEntries(entries) {
+      const container = document.getElementById("entries");
+      container.innerHTML = "";
+      entries.forEach(entry => {
+        const roleColor = {
+          "Coach": "bg-green-500",
+          "Player": "bg-blue-500",
+          "Team": "bg-yellow-500",
+          "Organisation": "bg-orange-500"
+        }[entry.role] || "bg-gray-500";
 
-        const card = document.createElement('div');
-        card.className = 'card';
+        const ageText = entry.age && entry.age !== 'null'
+          ? `<span class="text-sm text-gray-600 ml-2">| Age: ${entry.age}</span>`
+          : "";
 
-        const roleLabel = entry.role || "";
-        const badgeClass = roleLabel ? `role-badge role-${roleLabel}` : "";
+        const experienceText = entry.experience && entry.experience.toLowerCase() !== 'null' && entry.experience.trim() !== ''
+          ? `<p class="text-sm text-gray-600">Experience: ${entry.experience}</p>`
+          : `<p class="text-sm text-gray-600">Experience: n/a</p>`;
+
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-xl shadow-md p-4 min-h-[170px] flex flex-col justify-between relative";
 
         card.innerHTML = `
-          <div class="${badgeClass}">${roleLabel.toUpperCase()}</div>
-          <h3>${entry.name}</h3>
-          <p>${entry.request}</p>
           <div>
-            <a href="${entry.twitter}" target="_blank" class="btn twitter">Twitter</a>
-            <a href="${entry.moreInfo}" target="_blank" class="btn info">More Info</a>
+            <div class="absolute top-2 right-2">
+              <span class="${roleColor} text-white text-xs font-bold px-2 py-1 rounded">${entry.role}</span>
+            </div>
+            <h2 class="text-lg font-semibold mb-1">${entry.name}</h2>
+            <p class="mb-1">${entry.request}${ageText}</p>
+            ${experienceText}
+          </div>
+          <div class="flex gap-2 mt-2">
+            <a href="${entry.twitter}" target="_blank" class="bg-blue-400 hover:bg-blue-500 text-white px-3 py-1 rounded">Twitter</a>
+            <a href="${entry.moreInfo}" target="_blank" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded">More Info</a>
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    function applyFilters() {
-      const role = document.getElementById('roleFilter').value;
-      const region = document.getElementById('regionFilter').value;
-      const request = document.getElementById('requestFilter').value;
-      const showArchived = document.getElementById('showArchived').checked;
+    function applyFilters(entries) {
+      const role = document.getElementById("roleFilter").value;
+      const region = document.getElementById("regionFilter").value;
+      const request = document.getElementById("requestFilter").value;
+      const experience = document.getElementById("experienceFilter").value;
+      const showArchived = document.getElementById("showArchived").checked;
 
-      const filtered = data.filter(entry => {
-        const isActive = !entry.active || entry.active.trim().toLowerCase() === "yes";
-        const matchesRole = !role || (entry.role && entry.role.trim() === role);
-        const matchesRegion = !region || (entry.region && entry.region.trim() === region);
-        const matchesRequest = !request || (entry.request && entry.request.trim() === request);
-        return matchesRole && matchesRegion && matchesRequest && (showArchived || isActive);
+      return entries.filter(entry => {
+        if (!showArchived && entry.active !== "yes") return false;
+        if (role && entry.role !== role) return false;
+        if (region && entry.region !== region) return false;
+        if (request && entry.request !== request) return false;
+        if (experience && (!entry.experience || !entry.experience.toLowerCase().includes(experience.toLowerCase()))) return false;
+        return true;
       });
+    }
 
-      renderCards(filtered);
+    async function loadAndRenderEntries() {
+      const allEntries = await fetchEntries();
+      const filtered = applyFilters(allEntries);
+      renderEntries(filtered);
     }
 
     function resetFilters() {
-      document.getElementById('roleFilter').value = "";
-      document.getElementById('regionFilter').value = "";
-      document.getElementById('requestFilter').value = "";
-      document.getElementById('showArchived').checked = false;
-      applyFilters();
+      document.getElementById("roleFilter").value = "";
+      document.getElementById("regionFilter").value = "";
+      document.getElementById("requestFilter").value = "";
+      document.getElementById("experienceFilter").value = "";
+      document.getElementById("showArchived").checked = false;
+      loadAndRenderEntries();
     }
 
-    document.getElementById('roleFilter').addEventListener('change', applyFilters);
-    document.getElementById('regionFilter').addEventListener('change', applyFilters);
-    document.getElementById('requestFilter').addEventListener('change', applyFilters);
-    document.getElementById('showArchived').addEventListener('change', applyFilters);
-    document.getElementById('resetFilters').addEventListener('click', resetFilters);
-
-    loadData();
+    document.querySelectorAll("select, #showArchived").forEach(el => el.addEventListener("change", loadAndRenderEntries));
+    window.onload = loadAndRenderEntries;
   </script>
 </body>
 </html>

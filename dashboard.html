@@ -4,43 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f0f0f0;
-    }
-    .action-btns button {
-      margin-right: 5px;
-    }
-    .top-actions {
-      margin-bottom: 20px;
-    }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 p-6 text-sm">
   <script>
     const password = prompt("🔒 Admin-Passwort:");
     if (password !== "cs2free2025") {
-      document.body.innerHTML = "<h2>Zugriff verweigert ❌</h2>";
+      document.body.innerHTML = "<h2 class='text-red-600 text-xl font-semibold'>Zugriff verweigert ❌</h2>";
     }
   </script>
 
-  <div id="adminPanel" style="display:none">
-    <h1>Admin Dashboard</h1>
-    <div class="top-actions">
-      <button onclick="exportCSV()" class="btn submit">📥 CSV herunterladen</button>
+  <div id="adminPanel" class="hidden">
+    <h1 class="text-2xl font-bold mb-4">Admin Dashboard</h1>
+    <div class="mb-4">
+      <button onclick="exportCSV()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">📥 CSV herunterladen</button>
     </div>
-    <div id="admin-entries"></div>
+    <div id="admin-entries" class="overflow-x-auto"></div>
   </div>
 
   <script>
@@ -49,7 +28,7 @@
     let data = [];
 
     async function fetchData() {
-      const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*", {
+      const res = await fetch(supabaseUrl + "/rest/v1/entries?select=*&order=id.asc", {
         headers: {
           apikey: supabaseKey,
           Authorization: 'Bearer ' + supabaseKey
@@ -72,17 +51,19 @@
 
     function renderRow(entry) {
       return `
-        <tr id="row-${entry.id}">
-          <td>${entry.name}</td>
-          <td>${entry.role}</td>
-          <td>${entry.region}</td>
-          <td>${entry.request}</td>
-          <td><a href="${entry.twitter}" target="_blank">Twitter</a></td>
-          <td><a href="${entry.moreInfo}" target="_blank">More Info</a></td>
-          <td>${entry.active}</td>
-          <td class="action-btns">
-            <button onclick="editRow('${entry.id}')">Bearbeiten</button>
-            <button onclick="deleteEntry('${entry.id}')">Löschen</button>
+        <tr id="row-${entry.id}" class="bg-white border-b">
+          <td class="px-4 py-2">${entry.name}</td>
+          <td class="px-4 py-2">${entry.role}</td>
+          <td class="px-4 py-2">${entry.age || ''}</td>
+          <td class="px-4 py-2">${entry.region}</td>
+          <td class="px-4 py-2">${entry.request.replace(/\b\w/g, c => c.toUpperCase())}</td>
+          <td class="px-4 py-2">${entry.experience}</td>
+          <td class="px-4 py-2"><a class="text-blue-600 underline" href="${entry.twitter}" target="_blank">X.com</a></td>
+          <td class="px-4 py-2"><a class="text-blue-600 underline" href="${entry.moreInfo}" target="_blank">More Info</a></td>
+          <td class="px-4 py-2">${entry.active}</td>
+          <td class="px-4 py-2 space-x-2">
+            <button onclick="editRow('${entry.id}')" class="bg-yellow-400 hover:bg-yellow-500 px-2 py-1 rounded">Bearbeiten</button>
+            <button onclick="deleteEntry('${entry.id}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">Löschen</button>
           </td>
         </tr>
       `;
@@ -90,21 +71,41 @@
 
     function editEntryForm(entry) {
       return `
-        <td><input value="${entry.name}" id="name-${entry.id}" /></td>
-        <td><input value="${entry.role}" id="role-${entry.id}" /></td>
-        <td><input value="${entry.region}" id="region-${entry.id}" /></td>
-        <td><input value="${entry.request}" id="request-${entry.id}" /></td>
-        <td><input value="${entry.twitter}" id="twitter-${entry.id}" /></td>
-        <td><input value="${entry.moreInfo}" id="moreInfo-${entry.id}" /></td>
+        <td><input class="w-full border p-1" value="${entry.name}" id="name-${entry.id}" /></td>
         <td>
-          <select id="active-${entry.id}">
+          <select class="w-full border p-1" id="role-${entry.id}">
+            <option value="Coach" ${entry.role === "Coach" ? "selected" : ""}>Coach</option>
+            <option value="Player" ${entry.role === "Player" ? "selected" : ""}>Player</option>
+            <option value="Team" ${entry.role === "Team" ? "selected" : ""}>Team</option>
+            <option value="Organisation" ${entry.role === "Organisation" ? "selected" : ""}>Organisation</option>
+          </select>
+        </td>
+        <td><input class="w-full border p-1" value="${entry.age || ''}" id="age-${entry.id}" /></td>
+        <td>
+          <select class="w-full border p-1" id="region-${entry.id}">
+            <option value="EU" ${entry.region === "EU" ? "selected" : ""}>EU</option>
+            <option value="NA" ${entry.region === "NA" ? "selected" : ""}>NA</option>
+          </select>
+        </td>
+        <td>
+          <select class="w-full border p-1" id="request-${entry.id}">
+            <option value="looking for team" ${entry.request === "looking for team" ? "selected" : ""}>Looking for team</option>
+            <option value="looking for players" ${entry.request === "looking for players" ? "selected" : ""}>Looking for players</option>
+            <option value="looking for coach" ${entry.request === "looking for coach" ? "selected" : ""}>Looking for coach</option>
+          </select>
+        </td>
+        <td><input class="w-full border p-1" value="${entry.experience}" id="experience-${entry.id}" /></td>
+        <td><input class="w-full border p-1" value="${entry.twitter}" id="twitter-${entry.id}" /></td>
+        <td><input class="w-full border p-1" value="${entry.moreInfo}" id="moreInfo-${entry.id}" /></td>
+        <td>
+          <select class="border p-1" id="active-${entry.id}">
             <option value="yes" ${entry.active === "yes" ? "selected" : ""}>yes</option>
             <option value="no" ${entry.active === "no" ? "selected" : ""}>no</option>
           </select>
         </td>
-        <td class="action-btns">
-          <button onclick="saveEntry('${entry.id}')">Speichern</button>
-          <button onclick="loadEntries()">Abbrechen</button>
+        <td class="space-x-2">
+          <button onclick="saveEntry('${entry.id}')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">Speichern</button>
+          <button onclick="loadEntries()" class="bg-gray-300 hover:bg-gray-400 px-2 py-1 rounded">Abbrechen</button>
         </td>
       `;
     }
@@ -118,8 +119,10 @@
       const payload = {
         name: document.getElementById(`name-${id}`).value,
         role: document.getElementById(`role-${id}`).value,
+        age: document.getElementById(`age-${id}`).value,
         region: document.getElementById(`region-${id}`).value,
         request: document.getElementById(`request-${id}`).value,
+        experience: document.getElementById(`experience-${id}`).value,
         twitter: document.getElementById(`twitter-${id}`).value,
         moreInfo: document.getElementById(`moreInfo-${id}`).value,
         active: document.getElementById(`active-${id}`).value
@@ -153,11 +156,10 @@
     async function loadEntries() {
       data = await fetchData();
       const table = `
-        <table>
+        <table class="min-w-full bg-white rounded shadow">
           <thead>
-            <tr>
-              <th>Name</th><th>Role</th><th>Region</th><th>Request</th>
-              <th>Twitter</th><th>More Info</th><th>Active</th><th>Aktionen</th>
+            <tr class="bg-gray-200 text-left">
+              <th class="px-4 py-2">Name</th><th class="px-4 py-2">Role</th><th class="px-4 py-2">Age</th><th class="px-4 py-2">Region</th><th class="px-4 py-2">Looking for...</th><th class="px-4 py-2">Experience</th><th class="px-4 py-2">X.com</th><th class="px-4 py-2">More Info</th><th class="px-4 py-2">Active</th><th class="px-4 py-2">Aktionen</th>
             </tr>
           </thead>
           <tbody>
@@ -170,7 +172,7 @@
 
     window.onload = () => {
       if (password === "cs2free2025") {
-        document.getElementById("adminPanel").style.display = "block";
+        document.getElementById("adminPanel").classList.remove("hidden");
         loadEntries();
       }
     };

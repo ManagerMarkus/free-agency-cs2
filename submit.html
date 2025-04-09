@@ -1,126 +1,120 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Submit Request</title>
-  <link rel="stylesheet" href="style.css"/>
-  <style>
-    form {
-      max-width: 400px;
-      margin: 40px auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    label {
-      font-weight: bold;
-    }
-    input, select {
-      padding: 8px;
-      font-size: 14px;
-    }
-    button {
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-    #status {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Free Agency Request</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-  <h1 style="text-align:center;">Submit Request</h1>
-  <form id="submitForm">
-    <label for="name">Name</label>
-    <input id="name" required />
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
+    <h1 class="text-2xl font-bold mb-6">Submit Your Free Agency Post</h1>
+    <form id="submit-form" class="space-y-4">
+      <div>
+        <label for="name" class="block font-semibold">Name</label>
+        <input type="text" id="name" name="name" required class="w-full border px-3 py-2 rounded">
+      </div>
 
-    <label for="role">Role</label>
-    <select id="role" required>
-      <option value="">Select role</option>
-      <option value="Player">Player</option>
-      <option value="Coach">Coach</option>
-      <option value="Organisation">Organisation</option>
-    </select>
+      <div>
+        <label for="role" class="block font-semibold">Role</label>
+        <select id="role" name="role" required class="w-full border px-3 py-2 rounded">
+          <option value="">Select</option>
+          <option value="Coach">Coach</option>
+          <option value="Player">Player</option>
+          <option value="Team">Team</option>
+          <option value="Organisation">Organisation</option>
+        </select>
+      </div>
 
-    <label for="region">Region</label>
-    <select id="region" required>
-      <option value="">Select region</option>
-      <option value="EU">EU</option>
-      <option value="NA">NA</option>
-    </select>
+      <div>
+        <label for="age" class="block font-semibold">Age (optional)</label>
+        <input type="number" id="age" name="age" min="10" max="99" class="w-full border px-3 py-2 rounded">
+      </div>
 
-    <label for="request">Looking for...</label>
-    <select id="request" required>
-      <option value="">Select request</option>
-      <option value="Looking for team">Looking for team</option>
-      <option value="Looking for players">Looking for players</option>
-      <option value="Looking for coach">Looking for coach</option>
-    </select>
+      <div>
+        <label for="region" class="block font-semibold">Region</label>
+        <select id="region" name="region" required class="w-full border px-3 py-2 rounded">
+          <option value="">Select</option>
+          <option value="EU">EU</option>
+          <option value="NA">NA</option>
+        </select>
+      </div>
 
-    <label for="twitter">X.com Link</label>
-    <input id="twitter" type="url" pattern="https://x\.com/.*" required 
-      title="Bitte gib einen vollständigen X.com-Link an (z. B. https://x.com/yourhandle)" />
+      <div>
+        <label for="request" class="block font-semibold">Looking for...</label>
+        <select id="request" name="request" required class="w-full border px-3 py-2 rounded">
+          <option value="">Select</option>
+          <option value="looking for team">Looking for team</option>
+          <option value="looking for players">Looking for players</option>
+          <option value="looking for coach">Looking for coach</option>
+        </select>
+      </div>
 
-    <label for="moreInfo">More Info (X.com Post)</label>
-    <input id="moreInfo" type="url" pattern="https://x\.com/.*/status/.*" required 
-      title="Bitte gib den Link zu deinem X.com-Post an (z. B. https://x.com/yourhandle/status/...)" />
+      <div>
+        <label class="block font-semibold">Experience</label>
+        <div class="flex flex-wrap gap-4">
+          <label><input type="checkbox" name="experience" value="Open" class="mr-2"> Open</label>
+          <label><input type="checkbox" name="experience" value="Entry" class="mr-2"> Entry</label>
+          <label><input type="checkbox" name="experience" value="Intermediate" class="mr-2"> Intermediate</label>
+          <label><input type="checkbox" name="experience" value="Main" class="mr-2"> Main</label>
+          <label><input type="checkbox" name="experience" value="Advanced" class="mr-2"> Advanced</label>
+        </div>
+      </div>
 
-    <button type="submit">Send Request</button>
-    <div id="status"></div>
-  </form>
+      <div>
+        <label for="twitter" class="block font-semibold">X.com Link</label>
+        <input type="url" id="twitter" name="twitter" placeholder="https://x.com/yourprofile" pattern="https://x\.com/.*" class="w-full border px-3 py-2 rounded">
+      </div>
+
+      <div>
+        <label for="moreInfo" class="block font-semibold">More Info (X.com Post)</label>
+        <input type="url" id="moreInfo" name="moreInfo" placeholder="https://x.com/yourpost" pattern="https://x\.com/.*" class="w-full border px-3 py-2 rounded">
+      </div>
+
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit Request</button>
+    </form>
+  </div>
 
   <script>
-  const form = document.getElementById("submitForm");
-  const status = document.getElementById("status");
+    const form = document.getElementById('submit-form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-  // Neue, eindeutige Referenzen auf die Form-Felder
-  const nameInput = document.getElementById("name");
-  const role = document.getElementById("role");
-  const region = document.getElementById("region");
-  const request = document.getElementById("request");
-  const twitter = document.getElementById("twitter");
-  const moreInfo = document.getElementById("moreInfo");
+      const formData = new FormData(form);
+      const experience = [...formData.getAll('experience')];
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    status.textContent = "⏳ Sending...";
+      const data = {
+        name: formData.get('name'),
+        role: formData.get('role'),
+        age: formData.get('age') || '',
+        region: formData.get('region'),
+        request: formData.get('request'),
+        experience: experience.join(', '),
+        twitter: formData.get('twitter'),
+        moreInfo: formData.get('moreInfo')
+      };
 
-    const data = {
-      name: nameInput.value,
-      role: role.value,
-      region: region.value,
-      request: request.value,
-      twitter: twitter.value,
-      moreInfo: moreInfo.value,
-      active: "yes"
-    };
+      try {
+        const response = await fetch('https://naornmbibulaoglbfywk.supabase.co/rest/v1/freeagency', {
+          method: 'POST',
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify(data)
+        });
 
-    const res = await fetch("https://naornmbibulaoglbfywk.supabase.co/rest/v1/entries", {
-      method: "POST",
-      headers: {
-        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hb3JubWJpYnVsYW9nbGJmeXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM5NDgwNDMsImV4cCI6MjA1OTUyNDA0M30.Y_1yKFRauVaRzbnq0LPrKJeeuL7Xt-y_gMirNBf03i8",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
+        if (response.ok) {
+          alert('Successfully submitted!');
+          form.reset();
+        } else {
+          alert('Submission failed');
+        }
+      } catch (err) {
+        alert('Error: ' + err);
+      }
     });
-
-    if (res.ok) {
-      status.textContent = "✅ Success! Entry submitted.";
-      form.reset();
-    } else {
-      status.textContent = "❌ Failed to submit entry.";
-    }
-  });
   </script>
 </body>
 </html>
